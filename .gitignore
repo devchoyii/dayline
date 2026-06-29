@@ -1,0 +1,14 @@
+.agents/
+.vscode/
+
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+backend/dayline-api/.gradle/
+backend/dayline-api/.gradle-user-home/
+backend/dayline-api/build/
+backend/dayline-api/bin/
+
+*.log
+.env

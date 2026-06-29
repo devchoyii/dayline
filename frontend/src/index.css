@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-family: 'Nunito', 'Avenir', 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+  }
+
+  body {
+    @apply m-0 text-[#5f3f4e] antialiased;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-in {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.animate-in {
+  animation: daylineFadeIn 0.35s ease-out both;
+}
+
+@keyframes daylineFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
