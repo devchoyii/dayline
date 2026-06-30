@@ -135,7 +135,7 @@ Google OAuth2 로그인을 통해 사용자 인증을 수행하고,
 | id | 사용자 ID |
 | email | 이메일 |
 | name | 사용자 이름 |
-| provider_id | 로그인 제공자 |
+| provider | 로그인 제공자 |
 | provider_user_id | 제공자 사용자 ID |
 | created_at | 생성일 |
 | last_login_at | 마지막 로그인 |
