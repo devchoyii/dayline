@@ -26,8 +26,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             Authentication authentication
     ) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String providerId = oAuth2User.getAttribute("sub");
-        User user = userRepository.findByProviderUserId(providerId)
+        String providerUserId = oAuth2User.getAttribute("sub");
+        User user = userRepository.findByProviderUserId(providerUserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getName());

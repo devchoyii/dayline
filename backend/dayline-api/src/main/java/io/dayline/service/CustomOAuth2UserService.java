@@ -1,6 +1,6 @@
 package io.dayline.service;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -30,7 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         User user = userRepository.findByProviderUserId(providerUserId)
                 .orElseGet(() -> {
-                    String now = Instant.now().toString();
+                    LocalDateTime now = LocalDateTime.now();
                     User newUser = new User(email, name, "GOOGLE", providerUserId, now, now);
                     return userRepository.save(newUser);
                 });

@@ -1,6 +1,7 @@
 package io.dayline.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,12 +37,11 @@ public class Diary {
     private String content;
 
     @Column(name = "created_at", nullable = false)
-    private String createdAt; // ISO 8601 형식의 날짜와 시간 (예: 2024-06-01T12:00:00Z)
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
-    private String updatedAt; // ISO 8601 형식의 날짜와 시간 (예: 2024-06-01T12:00:00Z)
-
-    public Diary(User user, LocalDate diaryDate, String targetLanguage, String content, String createdAt, String updatedAt) {
+    private LocalDateTime updatedAt;
+    public Diary(User user, LocalDate diaryDate, String targetLanguage, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.user = user;
         this.diaryDate = diaryDate;
         this.targetLanguage = targetLanguage;
@@ -50,7 +50,7 @@ public class Diary {
         this.updatedAt = updatedAt;
     }
 
-    public void updateContent(String content, String updatedAt) {
+    public void updateContent(String content, LocalDateTime updatedAt) {
         this.content = content;
         this.updatedAt = updatedAt;
     }

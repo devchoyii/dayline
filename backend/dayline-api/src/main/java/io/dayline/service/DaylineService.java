@@ -1,6 +1,6 @@
 package io.dayline.service;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class DaylineService {
 
     @Transactional
     public void saveDiary(Long userId, DiaryRequest request) {
-        String now = Instant.now().toString();
+        LocalDateTime now = LocalDateTime.now();
 
         if (request.getId() != null) {
             Diary diary = diaryRepository.findByIdAndUser_Id(request.getId(), userId)
