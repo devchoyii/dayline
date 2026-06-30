@@ -30,14 +30,12 @@ type FeedbackRequest = {
 
 type DiarySaveRequest = {
   id: number | null;
-  userId: number;
   targetLanguage: string;
   diaryDate: string;
   content: string;
 };
 
 type DiarySelectRequest = {
-  userId: number;
   targetLanguage: string;
   diaryDate: string;
 };
@@ -100,12 +98,18 @@ export default function App() {
   const [diarySaveMessage, setDiarySaveMessage] = useState<string | null>(null);
 
   const quickDateText = useMemo(() => formatDateLabel(selectedDate), [selectedDate]);
+  const isLoggedIn = Boolean(userId && authToken);
 
   const handleLookup = async (query: string): Promise<TranslationApiResult> => {
+    if (!authToken) {
+      throw new Error('Login is required.');
+    }
+
     const response = await fetch('http://localhost:8080/translation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
       },
       body: JSON.stringify({
         text: query,
@@ -121,11 +125,16 @@ export default function App() {
   };
 
   const fetchRecommendation = async (language = targetLanguage) => {
+    if (!authToken) return;
+
     try {
       const response = await fetch(
         `http://localhost:8080/topics/recommend?targetLanguage=${encodeURIComponent(language)}`,
         {
           method: 'POST',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
         },
       );
 
@@ -161,9 +170,10 @@ export default function App() {
     }
   };
 
-  const fetchDiary = async (nextUserId: number, language: string, date: string) => {
+  const fetchDiary = async (language: string, date: string) => {
+    if (!authToken) return;
+
     const payload: DiarySelectRequest = {
-      userId: nextUserId,
       targetLanguage: language,
       diaryDate: date,
     };
@@ -173,7 +183,7 @@ export default function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+          Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify(payload),
       });
@@ -216,6 +226,7 @@ export default function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
         },
         body: JSON.stringify(payload),
       });
@@ -250,7 +261,6 @@ export default function App() {
 
     const payload: DiarySaveRequest = {
       id: diaryId,
-      userId,
       targetLanguage,
       diaryDate: selectedDate,
       content,
@@ -264,7 +274,7 @@ export default function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+          Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify(payload),
       });
@@ -274,7 +284,7 @@ export default function App() {
       }
 
       setDiarySaveMessage('일기를 저장했습니다.');
-      await fetchDiary(userId, targetLanguage, selectedDate);
+      await fetchDiary(targetLanguage, selectedDate);
     } catch (error) {
       console.error('handleSaveDiary failed', error);
       setDiarySaveMessage('일기를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.');
@@ -285,7 +295,6 @@ export default function App() {
 
   const handleLanguageChange = (nextLanguage: string) => {
     setTargetLanguage(nextLanguage);
-    void fetchRecommendation(nextLanguage);
   };
 
   const handleLogout = () => {
@@ -318,18 +327,20 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!authToken) return;
+
     void fetchRecommendation(targetLanguage);
-  }, []);
+  }, [authToken, targetLanguage]);
 
   useEffect(() => {
-    if (!userId) {
+    if (!isLoggedIn) {
       setDiaryId(null);
       setDiary('');
       return;
     }
 
-    void fetchDiary(userId, targetLanguage, selectedDate);
-  }, [userId, targetLanguage, selectedDate]);
+    void fetchDiary(targetLanguage, selectedDate);
+  }, [isLoggedIn, authToken, targetLanguage, selectedDate]);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_10%_0%,#fff8fe_0%,#fff2f9_38%,#ffffff_78%)] px-4 py-8 md:px-8">
@@ -340,7 +351,7 @@ export default function App() {
         <Header
           targetLanguage={targetLanguage}
           onChangeLanguage={handleLanguageChange}
-          isLoggedIn={Boolean(userId && authToken)}
+          isLoggedIn={isLoggedIn}
           userName={userName}
           onLogout={handleLogout}
         />
@@ -356,7 +367,7 @@ export default function App() {
             topics={topicList}
             onRecommend={fetchRecommendation}
             targetLanguage={targetLanguage}
-            isLoggedIn={Boolean(userId && authToken)}
+            isLoggedIn={isLoggedIn}
           />
         </section>
 
@@ -365,19 +376,19 @@ export default function App() {
           onChange={(value) => setDiary(value)}
           onSave={handleSaveDiary}
           isSaving={isDiarySaving}
-          isLoggedIn={Boolean(userId && authToken)}
+          isLoggedIn={isLoggedIn}
           saveMessage={diarySaveMessage}
         />
         <QuickTranslateBox
           onLookup={handleLookup}
           targetLanguage={targetLanguage}
-          isLoggedIn={Boolean(userId && authToken)}
+          isLoggedIn={isLoggedIn}
         />
         <FeedbackSection
           feedback={feedback}
           error={feedbackError}
           isLoading={isFeedbackLoading}
-          isLoggedIn={Boolean(userId && authToken)}
+          isLoggedIn={isLoggedIn}
           onRequestFeedback={handleRequestFeedback}
         />
       </div>

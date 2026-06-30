@@ -22,18 +22,31 @@ public class DaylineService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void saveDiary(DiaryRequest request) {
+    public void saveDiary(Long userId, DiaryRequest request) {
         String now = Instant.now().toString();
 
         if (request.getId() != null) {
-            Diary diary = diaryRepository.findByIdAndUser_Id(request.getId(), request.getUserId())
+            Diary diary = diaryRepository.findByIdAndUser_Id(request.getId(), userId)
                 .orElseThrow(() -> new RuntimeException("Diary not found."));
             
             diary.updateContent(request.getContent(), now);
             return;
         }
 
-        User user = userRepository.findById(request.getUserId())
+        Optional<Diary> existingDiary =
+            diaryRepository.findByUser_IdAndTargetLanguageAndDiaryDate(
+                userId,
+                request.getTargetLanguage(),
+                request.getDiaryDate()
+            );
+
+        if (existingDiary.isPresent()) {
+            Diary diary = existingDiary.get();
+            diary.updateContent(request.getContent(), now);
+            return;
+        }
+
+        User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found."));
 
         Diary diary = new Diary(
@@ -48,10 +61,10 @@ public class DaylineService {
         diaryRepository.save(diary);
     }
 
-    public DiaryResponse selectDiary(DiaryRequest request) {
+    public DiaryResponse selectDiary(Long userId, DiaryRequest request) {
         Optional<Diary> optionalDiary =
             diaryRepository.findByUser_IdAndTargetLanguageAndDiaryDate(
-                request.getUserId(),
+                userId,
                 request.getTargetLanguage(),
                 request.getDiaryDate()
             );

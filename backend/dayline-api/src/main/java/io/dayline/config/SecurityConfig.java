@@ -5,10 +5,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import io.dayline.security.JwtAuthenticationFilter;
 import io.dayline.security.OAuth2SuccessHandler;
 import io.dayline.service.CustomOAuth2UserService;
 
@@ -21,6 +23,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/", "/login", "/error", "/oauth2/**").permitAll()
-                        .requestMatchers("/api/topics/**", "/api/feedback/**", "/api/dayline/**").authenticated()
+                        .requestMatchers("/dayline/**", "/topics/**", "/feedback/**", "/translation/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .oauth2Login(oauth -> oauth
@@ -38,7 +41,8 @@ public class SecurityConfig {
                         .userService(customOAuth2UserService)
                     )
                     .successHandler(oAuth2SuccessHandler)
-                );
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
