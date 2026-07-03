@@ -185,6 +185,12 @@ npm run dev
 http://localhost:5173
 ```
 
+### Database
+
+PostgreSQL을 사용합니다.
+
+프로젝트 실행 후 Hibernate가 필요한 테이블을 자동 생성합니다.
+
 ---
 
 ## 환경 변수
