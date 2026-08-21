@@ -14,7 +14,8 @@ const languageOptions = [
   { value: 'spanish', label: '스페인어' },
 ];
 
-const googleLoginUrl = 'http://localhost:8080/oauth2/authorization/google';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
+const googleLoginUrl = `${apiBaseUrl}/oauth2/authorization/google`;
 
 export default function Header({ targetLanguage, onChangeLanguage, isLoggedIn, userName, onLogout }: HeaderProps) {
   const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {

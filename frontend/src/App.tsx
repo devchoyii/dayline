@@ -47,6 +47,8 @@ type DiaryResponse = {
   content: string | null;
 };
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
+
 const readJwtSubject = (token: string): number | null => {
   try {
     const [, payload] = token.split('.');
@@ -105,7 +107,7 @@ export default function App() {
       throw new Error('Login is required.');
     }
 
-    const response = await fetch('http://localhost:8080/translation', {
+    const response = await fetch(`${apiBaseUrl}/translation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -129,7 +131,7 @@ export default function App() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/topics/recommend?targetLanguage=${encodeURIComponent(language)}`,
+        `${apiBaseUrl}/topics/recommend?targetLanguage=${encodeURIComponent(language)}`,
         {
           method: 'POST',
           headers: {
@@ -179,7 +181,7 @@ export default function App() {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/dayline/select', {
+      const response = await fetch(`${apiBaseUrl}/dayline/select`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -222,7 +224,7 @@ export default function App() {
     setFeedbackError(null);
 
     try {
-      const response = await fetch('http://localhost:8080/feedback', {
+      const response = await fetch(`${apiBaseUrl}/feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -270,7 +272,7 @@ export default function App() {
     setDiarySaveMessage(null);
 
     try {
-      const response = await fetch('http://localhost:8080/dayline/save', {
+      const response = await fetch(`${apiBaseUrl}/dayline/save`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
