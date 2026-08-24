@@ -2,6 +2,7 @@ package io.dayline.security;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -19,6 +20,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
 
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
+
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request,
@@ -32,6 +36,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getName());
 
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:5173?token=" + token);
+        getRedirectStrategy().sendRedirect(request, response, frontendUrl + "?token=" + token);
     }
 }
