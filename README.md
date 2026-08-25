@@ -2,6 +2,8 @@
 
 Dayline은 외국어 일기 작성 과정에서 필요한 주제 추천, 번역, 피드백을 하나의 흐름으로 제공하는 AI 기반 외국어 학습 서비스입니다.
 
+배포 주소: https://harukkeut.kr
+
 외국어 학습을 위해 외국어로 일기를 쓰다 보면
 - 어떤 주제로 써야 할지 모르겠고
 - 모르는 표현은 번역기를 계속 오가야하고
@@ -200,6 +202,9 @@ OPENAI_API_KEY=...
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 JWT_SECRET=...
+FRONTEND_URL=http://localhost:5173
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+SERVER_ADDRESS=0.0.0.0
 ```
 ---
 ## 향후 개선 예정
